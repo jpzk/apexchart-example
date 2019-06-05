@@ -10,13 +10,19 @@ function getRandomInt(max) {
 
 var ts2 = 1484418600000;
 var dates = [];
+var dates2 = [];
+var dates3 = [];
 var spikes = [5, -5, 3, -3, 8, -8]
-for (var i = 0; i < 3000; i++) {
+for (var i = 0; i < 500; i++) {
   ts2 = ts2 + 86400000;
-  var innerArr = [ts2,getRandomInt(500)];
+  const dep = getRandomInt(100)
+  var innerArr = [ts2,2000+getRandomInt(500)];
+  var innerArr2 = [ts2,dep ];
+  var innerArr3 = [ts2,dep + 20];
   dates.push(innerArr)
+  dates2.push(innerArr2)
+  dates3.push(innerArr3)
 }
-
 
 class App extends Component {
   constructor(props) {
@@ -25,50 +31,76 @@ class App extends Component {
     this.state = {
       options: {
         chart: {
+          type: "line",
           stacked: false,
           zoom: {
             type: 'x',
             enabled: true
-          },
-          toolbar: {
-            autoSelected: 'zoom'
           }
         },
-        plotOptions: {
-          line: {
-            curve: 'smooth',
-          }
+        stroke: { 
+          curve: 'smooth',
+        width: 1
+        
         },
         dataLabels: {
           enabled: false
         },
 
-        markers: {
-          size: 0,
-          style: 'full',
-        },
-        //colors: ['#0165fc'],
+    
         title: {
           text: 'Stock Price Movement',
           align: 'left'
         },
       
-        yaxis: {
-          min: 0,
-          max: 1000,
-          labels: {
-            formatter: function (val) {
-              return (val).toFixed(0);
+
+        yaxis: [
+          {
+            seriesName: "Price",
+            opposite: true,
+
+            labels: {
+              style: {
+                color: '#008FFB',
+              }
+            },
+            title: {
+              text: "data1",
+             
+            },
+            tooltip: {
+              enabled: true
+            }
+          },
+  
+          {
+            seriesName: "Volume",
+
+            min: 0,
+            max: 500,
+
+            labels: {
+             
+            },
+            title: {
+              text: "Volume",
+              style: {
+                color: '#00E396',
+              }
             },
           },
-          title: {
-            text: 'Price'
-          },
-        },
+          {
+            seriesName: "Volume",
+            min: 0,
+            max: 500,
+            show: false
+          }
+       
+        ],
         xaxis: {
           type: 'datetime',
         },
-
+       
         tooltip: {
           shared: false,
           y: {
@@ -77,12 +109,25 @@ class App extends Component {
             }
           }
         }
-      },
-      series: [{
-        name: 'XYZ MOTORS',
-        data: dates
-      }],
+      }
+
     }
+
+     this.state.series = [{
+        name: "Price",
+        data: dates
+      },
+      {
+        name: "Real Volume",
+        type: 'area',
+        data: dates2
+      },
+      {
+        name: "Change Volume",
+        type: 'area',
+        data: dates3
+      },
+    ]
   }
 
   render() {
@@ -93,9 +138,10 @@ class App extends Component {
             <Chart
               options={this.state.options}
               series={this.state.series}
-              type="line"
               width="500"
             />
+             
+
           </div>
         </div>
       </div>
